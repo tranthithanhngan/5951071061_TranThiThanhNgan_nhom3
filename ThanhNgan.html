@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Map</title>
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            // dia chi buudien
+            const buuDien = { lat: 10.77988673869334, lng:106.69992030519005 };
+            //dia chi vanmieu
+            const vanMieuQuocTuGiam = { lat: 21.027458937497183, lng: 105.83545358501961 };
+
+            //icon buudien
+            const iconbuudien = {
+                url: "Buudien.jpg",
+                scaledSize: new google.maps.Size(20, 20),
+                origin: new google.maps.Point(0,0),
+                anchor: new google.maps.Point(0, 0)
+            };
+            //icon vanmieu
+            const iconvanmieu = {
+                url: "vanmieu.jpg",
+                scaledSize: new google.maps.Size(20, 20),
+                origin: new google.maps.Point(0,0),
+                anchor: new google.maps.Point(0, 0)
+            };
+
+
+            
+            //infor buudien
+            const infobuuDien = "<div>Bưu Điện Trung Tâm Thành Phố HCM<br />Địa chỉ : 2 Công xã Paris, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh, Việt Nam</div>";
+            //infor vanmieu
+            const infoVanMieuQuocTuGiam = "<div>Văn Miếu Quốc Tử Giám<br />Địa chỉ : 58 Quốc Tử Giám, Văn Miếu, Đống Đa, Hà Nội 100000, Việt Nam</div>";
+
+            // load Map
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 10,
+                center: vanMieuQuocTuGiam
+            });
+            directionsRenderer.setMap(map);
+
+            // icon buudien
+            const markerbuudien = new google.maps.Marker({
+                position: buuDien,
+                map: map,
+                title: "buudien",
+                draggable: true,
+                icon: iconbuudien,
+                animation: google.maps.Animation.DROP,
+            });
+            // icon vanmieu
+            const markervanmieu = new google.maps.Marker({
+                position: vanMieuQuocTuGiam,
+                map: map,
+                title: "vanmieu",
+                draggable: true,
+                icon: iconvanmieu,
+                animation: google.maps.Animation.DROP,
+            });
+
+
+            var circle = new google.maps.Circle({
+          map: map,
+          center: new google.maps.LatLng(21.027458937497183, 105.83545358501961),
+          radius: 10000,
+          strokeColor:"#003DF5",
+          fillColor:"#003DF5",
+        });
+
+        const outerCoords = [  
+          { lat: 21.093709811483254, lng: 106.07012505417914 },
+          { lat: 21.18862430506916, lng: 105.65901458895544 },
+          { lat: 20.79287580285784, lng: 105.77436315082825  },
+        ];
+
+        const innerCoords = [
+          { lat: 20.936392122061844, lng: 105.75720653926809 },
+          { lat: 21.034794518706853, lng: 105.96029027422495 },
+          { lat: 21.136800843986357, lng: 105.79118026387177 },
+        ];
+
+        const bermudaTriangle = new google.maps.Polygon({
+          paths: outerCoords,
+          strokeColor: "#FF333",
+          strokeOpacity: 0.7,
+          strokeWeight: 2,
+          fillColor: "#FF333",
+          fillOpacity: 0.3,
+          editable: true,
+          draggable: true
+        });
+        bermudaTriangle.setMap(map);
+
+        const bermudaTriangle1 = new google.maps.Polygon({
+          paths: innerCoords,
+          strokeColor: "#FF6699",
+          strokeOpacity: 0.7,
+          strokeWeight: 2,
+          fillColor: "#FF6699",
+          fillOpacity: 0.3,
+          editable: true,
+          draggable: true
+        });
+        bermudaTriangle1.setMap(map);
+
+            // tao info
+            const infobuuDienLoad = new google.maps.InfoWindow({
+                content: infobuuDien
+            });
+            markerbuudien.addListener("click", () =>infobuuDienLoad.open(map, markerbuudien));
+            const infovanmieuLoad = new google.maps.InfoWindow({
+                content: vanMieuQuocTuGiam
+            });
+            markervanmieu.addListener("click", () => infovanmieuLoad.open(map, markervanmieuss));
+
+            // function chi duong
+            function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+            directionsService.route(
+                {
+                    origin: buuDien,
+                    destination: vanMieuQuocTuGiam,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                },
+                (response, status) => {
+                    if (status === "OK") {
+                        directionsRenderer.setDirections(response);
+                    } else {window.alert("Directions request failed due to " + status);}});
+        }
+        calculateAndDisplayRoute(directionsService, directionsRenderer);
+        }
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIwzALxUPNbatRBj3Xi1Uhp0fFzwWNBkE&callback=initMap&libraries=&v=weekly"
+        async>
+    </script>
+</body>
+</html>
